@@ -361,31 +361,31 @@ class Plugin(flake8_helper.Plugin[Visitor]):
 
 	def run(self) -> Iterator[Tuple[int, int, str, Type["Plugin"]]]:  # noqa: D102
 
-		try:
-			# 3rd party
-			import jedi
+		# try:
+		# 	# 3rd party
+		# 	import jedi
 
-			# jedi.settings.fast_parser = False
+		# 	# jedi.settings.fast_parser = False
 
-			original_cache_dir = jedi.settings.cache_directory
+		# 	original_cache_dir = jedi.settings.cache_directory
 
-			with tempfile.TemporaryDirectory() as cache_directory:
-				jedi.settings.cache_directory = cache_directory
+		# 	with tempfile.TemporaryDirectory() as cache_directory:
+		# 		jedi.settings.cache_directory = cache_directory
 
-				class_visitor = ClassVisitor()
-				class_visitor.first_visit(self._tree, self.filename)
+		# 		class_visitor = ClassVisitor()
+		# 		class_visitor.first_visit(self._tree, self.filename)
 
-				for line, col, msg in class_visitor.errors:
-					yield line, col, msg, type(self)
+		# 		for line, col, msg in class_visitor.errors:
+		# 			yield line, col, msg, type(self)
 
-			jedi.settings.cache_directory = original_cache_dir
+		# 	jedi.settings.cache_directory = original_cache_dir
 
-		except ImportError:
-			visitor = Visitor()
-			visitor.visit(self._tree)
+		# except ImportError:
+		visitor = Visitor()
+		visitor.visit(self._tree)
 
-			for line, col, msg in visitor.errors:
-				yield line, col, msg, type(self)
+		for line, col, msg in visitor.errors:
+			yield line, col, msg, type(self)
 
 
 def is_configparser_read(class_name: str, method_name: str) -> bool:
